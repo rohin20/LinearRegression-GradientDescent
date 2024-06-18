@@ -2,16 +2,24 @@ import numpy as np
 import pandas as pd
 
 data = pd.read_csv("californiahousing.csv")
-data = data.fillna(data.median())
 
+
+numeric_columns = data.select_dtypes(include=[np.number]).columns
+data[numeric_columns] = data[numeric_columns].fillna(data[numeric_columns].median())
+
+# Convert categorical column to numerical (one-hot encoding)
+data = pd.get_dummies(data, columns=['ocean_proximity'])
+
+# Separate features and target variable
 X = data.drop(columns="median_house_value")
 y = data['median_house_value']
 
-#standardize
-Xstandardized = (X-(X.mean()))/(X.std())
+# Standardize the numeric features
+numeric_columns = X.select_dtypes(include=[np.number]).columns
+X[numeric_columns] = (X[numeric_columns] - X[numeric_columns].mean()) / X[numeric_columns].std()
 
 m = len(y)
-X_b = np.c_[np.ones((m, 1)), Xstandardized]
+X_b = np.c_[np.ones((m, 1)), X]
 #first column is made with just 1s
 
 np.random.seed(42)
@@ -25,11 +33,16 @@ def prediction(X, theta):
 
 def costFunction(X,y,theta):
     ypred = prediction(X,theta)
-    cost = (1/2*m) * np.sum((ypred-y)**2)
+    cost = (1/(2*m)) * np.sum((ypred-y)**2)
     return cost
 
 for i in range(1000):
-    ypred = prediction(X,theta)
-    cost = costFunction(X,y,theta)
-    dcost = (1/m) * np.matmul(X.transpose(),(ypred-y))
+    ypred = prediction(X_b,theta)
+    cost = costFunction(X_b,y,theta)
+    dcost = (1/m) * np.matmul(X_b.transpose(),(ypred-y))
     theta = theta-stepSize*dcost
+
+ypred = prediction(X_b, theta)
+mse = np.mean((y-ypred)**2)
+
+print(f"Mean Squared error = {mse}")
