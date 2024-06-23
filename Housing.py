@@ -33,16 +33,17 @@ def prediction(X, theta):
 
 def costFunction(X,y,theta):
     ypred = prediction(X,theta)
-    cost = (1/(2*m)) * np.sum((ypred-y)**2)
+    cost = (1 / (2 * m)) * np.sum((ypred-y)**2)
     return cost
 
-for i in range(1000):
+for i in range(5000):
     ypred = prediction(X_b,theta)
     cost = costFunction(X_b,y,theta)
     dcost = (1/m) * np.matmul(X_b.transpose(),(ypred-y))
-    theta = theta-stepSize*dcost
+    theta -=stepSize*dcost
 
 ypred = prediction(X_b, theta)
 mse = np.mean((y-ypred)**2)
-
+rootmse = np.sqrt(mse)
 print(f"Mean Squared error = {mse}")
+print(f"Root Mean Squared error = {rootmse}")
