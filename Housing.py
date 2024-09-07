@@ -20,11 +20,12 @@ X[numeric_columns] = (X[numeric_columns] - X[numeric_columns].mean()) / X[numeri
 
 m = len(y)
 X_b = np.c_[np.ones((m, 1)), X]
+X_b = X_b.astype(float)
 #first column is made with just 1s
 
 np.random.seed(42)
-theta = np.random.randn(X_b.shape[1], 1) #vector of random thetas
-y = y.values.reshape(-1, 1) #change to column vector
+theta = np.random.randn(X_b.shape[1], 1).astype(float) #vector of random thetas
+y = y.values.reshape(-1, 1).astype(float) #change to column vector
 
 stepSize = 0.01
 
@@ -40,10 +41,14 @@ for i in range(5000):
     ypred = prediction(X_b,theta)
     cost = costFunction(X_b,y,theta)
     dcost = (1/m) * np.matmul(X_b.transpose(),(ypred-y))
-    theta -=stepSize*dcost
+    theta -= stepSize*dcost
 
 ypred = prediction(X_b, theta)
 mse = np.mean((y-ypred)**2)
 rootmse = np.sqrt(mse)
 print(f"Mean Squared error = {mse}")
 print(f"Root Mean Squared error = {rootmse}")
+
+mean_price = np.mean(y)
+percent_error = (rootmse / mean_price) * 100
+print(f"Percent error = {percent_error}%")

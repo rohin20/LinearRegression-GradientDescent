@@ -15,7 +15,7 @@ m = len(y)
 print(m)
 theta0 =  np.random.randn()
 theta1 =  np.random.randn()
-# theta0 and theta1 are random so that we can converge to the min from any point
+#theta0 and theta1 are random so that we can converge to the min from any point
 stepSize = 0.01
 
 def prediction(X,theta0,theta1):
